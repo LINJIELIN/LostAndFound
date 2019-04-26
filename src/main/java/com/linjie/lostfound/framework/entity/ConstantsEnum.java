@@ -17,7 +17,7 @@ public enum ConstantsEnum {
     ACCOUNT_IS_ONLINE(1,"在线"),ACCOUNT_IS_OFFLINE(0,"离线");
 
     public static final Integer PAGE_DEFT = 1; //默认分页查询页面
-    public static final Integer SIZE_DEFT = 10; //默认分页查询每页条数
+    public static final Integer SIZE_DEFT = 5; //默认分页查询每页条数
 
     public static final String UPLOAD = "E:\\Demo\\lostfound\\upload\\";
 

@@ -1,18 +1,30 @@
 package com.linjie.lostfound.system.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 public class Journalism {
 
-    @Id@GeneratedValue
+    @Id
+    @TableGenerator(name="JOURNALISM_GENERATOR",
+            table="PK_GENERATOR",
+            pkColumnName="PK_COLUMN",
+            pkColumnValue="journalism",
+            valueColumnName="PK_VALUE",
+            initialValue=4000000,
+            allocationSize=1
+    )
+    @GeneratedValue(strategy= GenerationType.TABLE, generator="JOURNALISM_GENERATOR")
+    @Column(name = "j_id")
     private Long id;
+    @Column(name = "j_type")
     private String type;//类型
+    @Column(name = "j_content")
     private String content;//内容
+    @Column(name = "j_initiator")
     private String initiator;//发起人
+    @Column(name = "j_createTime")
     private Date createTime;//创建时间
 
     public Long getId() {

@@ -2,9 +2,11 @@ package com.linjie.lostfound.framework.util;
 
 import com.linjie.lostfound.framework.entity.ConstantsEnum;
 import org.springframework.web.multipart.MultipartFile;
+import sun.misc.BASE64Encoder;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.UUID;
 
 /**
@@ -15,7 +17,24 @@ import java.util.UUID;
  * @Vresion: 1.0.0
  **/
 public class FileUtil {
-
+    public static String getImageString(MultipartFile multipartFile) {
+        //1.判断文件是否存在
+        if (multipartFile == null || multipartFile.isEmpty()) {
+            return null;
+        }
+        byte[] data = null;
+        try {
+            InputStream inputStream = multipartFile.getInputStream();
+            data = new byte[inputStream.available()];
+            inputStream.read(data);
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // base加密
+        BASE64Encoder encoder = new BASE64Encoder();
+        return "data:image/jpeg;base64," + encoder.encode(data);
+    }
     /**
      * @Author MSI
      * @Description 文件存储方法，根据主路径+资源类型存储文件

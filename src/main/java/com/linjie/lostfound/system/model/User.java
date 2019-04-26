@@ -30,15 +30,26 @@ public class User {
                     allocationSize=1
     )
     @GeneratedValue(strategy=GenerationType.TABLE, generator="USER_GENERATOR")
+    @Column(name = "u_id")
     private Long id; //id
+    @Column(name = "u_student_id")
+    private String studentId;
+    @Column(name = "u_account")
     private String account; //用户名
-    @JSONField(serialize = false)
+    //@JSONField(serialize = false)
+    @Column(name = "u_password")
     private String password; //密码
+    @Column(name = "u_name")
     private String name ; //姓名
+    @Column(name = "u_phone")
     private String phone; //手机号
+    @Column(name = "u_email")
     private String email; //邮箱
+    @Column(name = "u_enabled")
     private Integer isEnabled = ConstantsEnum.ACCOUNT_STATUS_VALID.getValue(); //是否可用
+    @Column(name = "u_online")
     private Integer isOnline = ConstantsEnum.ACCOUNT_IS_OFFLINE.getValue(); //是否在线
+    @Column(name = "u_role_name")
     private String roleName = ConstantsEnum.USER_ROLE_USER.getData(); //角色名
 
     public Long getId() {
@@ -47,6 +58,14 @@ public class User {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(String studentId) {
+        this.studentId = studentId;
     }
 
     public String getAccount() {

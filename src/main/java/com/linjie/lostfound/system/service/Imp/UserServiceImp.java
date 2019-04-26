@@ -25,16 +25,22 @@ public class UserServiceImp implements UserService {
     @Autowired
     UserRepository userRepository;
 
+    @Override
+    public User findByAccount(String account) {
+        return userRepository.findByAccount(account);
+    }
+
     /**
      * @Author MSI
      * @Description 根据用户名或者电话号码查询是否存在此用户
      * @Date 2019/1/3 15:58
      * @Param [name]
      * @return com.inchwisp.tale.system.model.User 
-     **/       
+     **/
+
     @Override
-    public User findByAccountOrPhone(String account, String phone) {
-        return userRepository.findByAccountOrPhone(account,phone);
+    public User findByAccountOrPhone(String keyWord) {
+        return userRepository.findByAccountOrPhone(keyWord);
     }
 
     @Override

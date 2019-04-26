@@ -1,23 +1,44 @@
 package com.linjie.lostfound.system.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Lost {
-    @Id @GeneratedValue
+    @Id
+    @TableGenerator(name="LOST_GENERATOR",
+            table="PK_GENERATOR",
+            pkColumnName="PK_COLUMN",
+            pkColumnValue="lost",
+            valueColumnName="PK_VALUE",
+            initialValue=2000000,
+            allocationSize=1
+    )
+    @GeneratedValue(strategy=GenerationType.TABLE, generator="LOST_GENERATOR")
+    @Column(name = "l_id")
     private Long id; //主键
+    @Column(name = "l_title")
     private String title; //标题
-    private String type; //类型
-    private Date lostTime; //丢失时间   单词1单词2  ，lost + time  单词2首字母大写 = lostTime
+//    @Column(name = "l_type")
+//    private String type; //类型
+    @Column(name = "l_lost_time")
+    private String lostTime;//丢失时间   单词1单词2  ，lost + time  单词2首字母大写 = lostTime
+    @Column(name = "l_location")
     private String location; //丢失地点
+    @Column(name = "l_retrieve")
     private boolean retrieve = false; //是否找回 ,false表示未被找回
+    @Column(name = "l_information")
     private String information; //详细信息
+    @Column(name = "l_contacts")
     private String contacts; //联系人
+    @Column(name = "l_phone")
     private String phone; //电话
+    @Column(name = "l_image",columnDefinition = "mediumtext")
     private String image; //图片存放路径
+
+    @ManyToOne(cascade = CascadeType.REFRESH,fetch = FetchType.EAGER,optional = true)
+    private Sort sort;
 
     public Long getId() {
         return id;
@@ -35,19 +56,11 @@ public class Lost {
         this.title = title;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Date getLostTime() {
+    public String getLostTime() {
         return lostTime;
     }
 
-    public void setLostTime(Date lostTime) {
+    public void setLostTime(String lostTime) {
         this.lostTime = lostTime;
     }
 
@@ -97,5 +110,13 @@ public class Lost {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public Sort getSort() {
+        return sort;
+    }
+
+    public void setSort(Sort sort) {
+        this.sort = sort;
     }
 }

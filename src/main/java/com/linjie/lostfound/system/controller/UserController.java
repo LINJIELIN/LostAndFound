@@ -29,6 +29,7 @@ import java.util.List;
  * @Vresion:  1.0.0
  **/
 @RestController
+@CrossOrigin("*")
 public class UserController {
 
     @Autowired //Spring自动装配  Controller Service Dao Bean
@@ -42,16 +43,8 @@ public class UserController {
      * @return com.inchwisp.tale.framework.entity.Response
      **/
     @PostMapping("/login")
-    public Response login(@RequestBody JSONObject data, HttpSession session) {
-        //1、获取数据，验证完整性
-        String account = data.getString("account");
-        String phone = data.getString("phone");
-        String password = data.getString("password");
-        if (CommUtil.isNullString(password)) {
-            return Response.factoryResponse(StatusEnum.SYSTEM_ERROR_9002.getCode(),StatusEnum.SYSTEM_ERROR_9002.getData());
-        }
-        //2、查询数据库，获得用户信息
-        User user = userService.findByAccountOrPhone(account,phone);
+    public Response login(String account,String password, HttpSession session) {
+        User user = userService.findByAccountOrPhone(account);
         //3、判断用户信息————不存在，用户被禁用，密码不正确
         if (user == null) {
             return Response.factoryResponse(StatusEnum.USER_ERROR_1005.getCode(),StatusEnum.USER_ERROR_1005.getData());
@@ -64,8 +57,32 @@ public class UserController {
         }
         //4、验证成功，用户信息写入session
         session.setAttribute("user",user);
-        return Response.factoryResponse(StatusEnum.RESPONSE_OK.getCode(),"登陆成功");
+        return Response.factoryResponse(StatusEnum.RESPONSE_OK.getCode(),user);
     }
+//    public Response login(@RequestBody JSONObject data, HttpSession session) {
+//        //1、获取数据，验证完整性
+//        String account = data.getString("account");
+//        String phone = data.getString("phone");
+//        String password = data.getString("password");
+//        if (CommUtil.isNullString(password)) {
+//            return Response.factoryResponse(StatusEnum.SYSTEM_ERROR_9002.getCode(),StatusEnum.SYSTEM_ERROR_9002.getData());
+//        }
+//        //2、查询数据库，获得用户信息
+//        User user = userService.findByAccountOrPhone(account,phone);
+//        //3、判断用户信息————不存在，用户被禁用，密码不正确
+//        if (user == null) {
+//            return Response.factoryResponse(StatusEnum.USER_ERROR_1005.getCode(),StatusEnum.USER_ERROR_1005.getData());
+//        }
+//        if (user.getIsEnabled() == ConstantsEnum.ACCOUNT_STATUS_INVALID.getValue()) {
+//            return Response.factoryResponse(StatusEnum.USER_ERROR_1002.getCode(),StatusEnum.USER_ERROR_1002.getData());
+//        }
+//        if (!user.getPassword().equals(MD5Util.MD5(password))) {
+//            return Response.factoryResponse(StatusEnum.USER_ERROR_1001.getCode(),StatusEnum.USER_ERROR_1001.getData());
+//        }
+//        //4、验证成功，用户信息写入session
+//        session.setAttribute("user",user);
+//        return Response.factoryResponse(StatusEnum.RESPONSE_OK.getCode(),"登陆成功");
+//    }
 
     /**
      * @Author MSI
@@ -92,21 +109,22 @@ public class UserController {
      **/
     @PostMapping("/register")
     @Permission(PermissionConstants.USER_ROLE_ADMIN)
-    public Response register(@RequestBody JSONObject data) {
+    public Response register(@RequestParam("account") String account,
+                             @RequestParam("name") String name,
+                             @RequestParam("password") String password,
+                             @RequestParam("passwordRetry") String passwordRetry,
+                             @RequestParam("phone") String phone,
+                             @RequestParam("email") String email,
+                             @RequestParam("roleName") String roleName,
+                             @RequestParam("studentID") String studentID) {
         //1、获取数据
-        String account = data.getString("account");
-        String password = data.getString("password");
-        String passwordRetry = data.getString("passwordRetry");
-        String name = data.getString("name");
-        String phone = data.getString("phone");
-        String email = data.getString("email");
         //2、判断，验证数据完整性
         if (CommUtil.isNullString(account,password,passwordRetry,name,phone)) {
             return Response.factoryResponse(StatusEnum.SYSTEM_ERROR_9002.getCode(),StatusEnum.SYSTEM_ERROR_9002.getData());
         }
         //3、验证用户是否可以注册
         //3.1用户已存在
-        if (userService.findByAccountOrPhone(account,phone) != null) {
+        if (userService.findByAccountOrPhone(account) != null) {
             return Response.factoryResponse(StatusEnum.USER_ERROR_1004.getCode(),StatusEnum.USER_ERROR_1004.getData());
         }
         //3.2两次输入密码不一致
@@ -120,6 +138,7 @@ public class UserController {
         user.setName(name);
         user.setPhone(phone);
         user.setEmail(email);
+        user.setStudentId(studentID);
         user.setRoleName(ConstantsEnum.USER_ROLE_ADMIN.getData());
         //4、调用Service，新增用户
         try {
@@ -139,18 +158,20 @@ public class UserController {
      **/
     @PostMapping("/user")
     @Permission(PermissionConstants.USER_ROLE_ADMIN)
-    public Response addUser(@RequestBody JSONObject data) {
-        //1、获取数据
-        String account = data.getString("account");
-        String password = data.getString("password");
-        String passwordRetry = data.getString("passwordRetry");
-        String name = data.getString("name");
-        String phone = data.getString("phone");
-        String email = data.getString("email");
-        String roleName = data.getString("roleName");
+    public Response addUser(@RequestParam("account") String account,
+                            @RequestParam("name") String name,
+                            @RequestParam("password") String password,
+                            @RequestParam("passwordRetry") String passwordRetry,
+                            @RequestParam("phone") String phone,
+                            @RequestParam("email") String email,
+                            @RequestParam("roleName") String roleName,
+                            @RequestParam("studentID") String studentID) {
         //2、判断，验证数据完整性
         if (CommUtil.isNullString(account,password,passwordRetry,name,phone)) {
             return Response.factoryResponse(StatusEnum.SYSTEM_ERROR_9002.getCode(),StatusEnum.SYSTEM_ERROR_9002.getData());
+        }
+        if (userService.findByAccountOrPhone(account) != null) {
+            return Response.factoryResponse(StatusEnum.USER_ERROR_1004.getCode(),StatusEnum.USER_ERROR_1004.getData());
         }
         if (!password.equals(passwordRetry)) { //密码不一致
             return Response.factoryResponse(StatusEnum.USER_ERROR_1003.getCode(),StatusEnum.USER_ERROR_1003.getData());
@@ -163,6 +184,7 @@ public class UserController {
         user.setPhone(phone);
         user.setEmail(email);
         user.setRoleName(roleName);
+        user.setStudentId(studentID);
         //4、调用Service，新增用户
         try {
             userService.saveUser(user);
@@ -179,11 +201,10 @@ public class UserController {
      * @Param [id]
      * @return com.inchwisp.tale.framework.entity.Response
      **/
-    @DeleteMapping("/user")
+    @DeleteMapping("/user/{id}")
     @Permission(PermissionConstants.USER_ROLE_ADMIN)
-    public Response deleteUser(@RequestBody JSONObject data) {
+    public Response deleteUser(@PathVariable Long id) {
         //1、验证数据完整性
-        Long id = data.getLong("id");
         if (CommUtil.isNullValue(id) ) {
             return  Response.factoryResponse(StatusEnum.SYSTEM_ERROR_9002.getCode(),StatusEnum.SYSTEM_ERROR_9002.getData());
         }
@@ -210,16 +231,14 @@ public class UserController {
      **/
     @PutMapping("/user")
     @Permission(PermissionConstants.USER_ROLE_ADMIN)
-    public Response updateUser(@RequestBody JSONObject data) {
-        //1、获取数据
-        Long id = data.getLong("id");
-        String account = data.getString("account");
-        String password = data.getString("password");
-        String name = data.getString("name");
-        String phone = data.getString("phone");
-        String email = data.getString("email");
-        //Integer roleId = data.getInteger("roleId");
-        String roleName = data.getString("roleName");
+    public Response updateUser(@RequestParam("id") Long id,
+                               @RequestParam("account") String account,
+                               @RequestParam("name") String name,
+                               @RequestParam("password") String password,
+                               @RequestParam("phone") String phone,
+                               @RequestParam("email") String email,
+                               @RequestParam("roleName") String roleName,
+                               @RequestParam("studentID") String studentID) {
         //2、判断，验证数据完整性
         if (CommUtil.isNullValue(id) || CommUtil.isNullString(account,password,name)) {
             return  Response.factoryResponse(StatusEnum.SYSTEM_ERROR_9002.getCode(),StatusEnum.SYSTEM_ERROR_9002.getData());
@@ -232,8 +251,8 @@ public class UserController {
         user.setName(name);
         user.setPhone(phone);
         user.setEmail(email);
-        //user.setRoleId(roleId);
         user.setRoleName(roleName);
+        user.setStudentId(studentID);
         //4、调用Service，修改用户
         try {
             userService.saveUser(user);
@@ -262,7 +281,6 @@ public class UserController {
             return Response.factoryResponse(StatusEnum.USER_ERROR_1005.getCode(),StatusEnum.USER_ERROR_1005.getData());
         }
         return Response.factoryResponse(StatusEnum.RESPONSE_OK.getCode(),user);
-
     }
 
     /**
@@ -278,7 +296,6 @@ public class UserController {
         List<User> userList = userService.findAll();
         return Response.factoryResponse(StatusEnum.RESPONSE_OK.getCode(),userList);
     }
-
     /**
      * @Author MSI
      * @Description 条件分页查询，可查询条件：姓名（模糊）
@@ -290,14 +307,26 @@ public class UserController {
     @Permission(PermissionConstants.USER_ROLE_ADMIN)
     public Response searchUser(@RequestParam(value = "page") Integer page,
                                @RequestParam(value = "size") Integer size,
-                               @RequestParam(value = "name") String name) {
+                               @RequestParam(value = "name",defaultValue = "") String name) {
         page = CommUtil.isNullValue(page) ? ConstantsEnum.PAGE_DEFT : page;
         size = CommUtil.isNullValue(size) ? ConstantsEnum.SIZE_DEFT : size;
-        //分页参数                              页码，每页多少条，  排序
         Pageable pageable = PageRequest.of(page-1, size, Sort.by(Sort.Direction.ASC, "id"));
         Page<User> userPage = userService.pageUser(name,pageable);
         JSONObject data = PageUtil.pageInfo(userPage);
         return Response.factoryResponse(StatusEnum.RESPONSE_OK.getCode(),data);
+    }
+
+    @GetMapping("/user/account")
+    public Response detailUser(@RequestParam("account")  String account ) {
+        if (CommUtil.isNullString(account) ) {
+            return  Response.factoryResponse(StatusEnum.SYSTEM_ERROR_9002.getCode(),StatusEnum.SYSTEM_ERROR_9002.getData());
+        }
+        //2、判断用户是否存在
+        User user = userService.findByAccount(account);
+        if (user == null) {
+            return Response.factoryResponse(StatusEnum.USER_ERROR_1005.getCode(),StatusEnum.USER_ERROR_1005.getData());
+        }
+        return Response.factoryResponse(StatusEnum.RESPONSE_OK.getCode(),user);
     }
 
 }

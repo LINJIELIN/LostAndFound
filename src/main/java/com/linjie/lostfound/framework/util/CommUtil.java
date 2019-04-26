@@ -100,4 +100,11 @@ public class CommUtil {
         return stringDate;
     }
 
+    public static String dateToString(Date date,String pattern) {
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        String stringDate = sdf.format(date);
+        System.out.println("stringDate : " + stringDate);
+        return stringDate;
+    }
+
 }

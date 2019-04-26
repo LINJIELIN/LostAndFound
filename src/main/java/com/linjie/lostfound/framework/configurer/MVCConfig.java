@@ -25,14 +25,14 @@ public class MVCConfig extends WebMvcConfigurerAdapter {
      **/
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loginInterceptor())
-                .excludePathPatterns("/static/*")
-                .excludePathPatterns("/error")
-                .excludePathPatterns("/login")
-                .excludePathPatterns("/loginOut")
-                .excludePathPatterns("/register")
-                .excludePathPatterns("/test")//默认不拦截路径
-                .addPathPatterns("/**"); //拦截所有路径
+//        registry.addInterceptor(loginInterceptor())
+//                .excludePathPatterns("/static/*")
+//                .excludePathPatterns("/error")
+//                .excludePathPatterns("/login")
+//                .excludePathPatterns("/loginOut")
+//                .excludePathPatterns("/register")
+//                .excludePathPatterns("/test")//默认不拦截路径
+//                .addPathPatterns("/**"); //拦截所有路径
     }
 
     @Bean

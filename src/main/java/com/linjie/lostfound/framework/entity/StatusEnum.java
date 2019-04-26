@@ -28,8 +28,9 @@ public enum StatusEnum {
 
 
     FOUND_ERROR_3001("3001","拾物已存在"),FOUND_ERROR_3002("3002","拾物不存在"),
-    FOUND_ERROR_3003("3003","上传拾物图片异常"),FOUND_ERROR_3004("",""),
+    FOUND_ERROR_3003("3003","上传拾物图片异常"),
 
+    SORT_ERROR_7001("7001","分类已存在"),SORT_ERROR_7002("7002","分类不存在"),
 
     JOURNALISM_ERROR_4001("4001","咨讯已存在"),JOURNALISM_ERROR_4002("4002","咨讯不存在"),
 

@@ -14,6 +14,15 @@ import java.util.List;
  * @Vresion: 1.0.0
  **/
 public interface UserService {
+    
+    /**
+     * @Author LINJIE
+     * @Description //TODO 根据用户名查询是否具有删除权限
+     * @Date 16:02 2019/4/25
+     * @Param [account]
+     * @return com.linjie.lostfound.system.model.User
+     **/
+    User findByAccount(String account);
 
     /**
      * @Author MSI
@@ -22,7 +31,7 @@ public interface UserService {
      * @Param [name]
      * @return com.inchwisp.tale.system.model.User 
      **/       
-    User findByAccountOrPhone(String account, String phone);
+    User findByAccountOrPhone(String keyWord);
 
     /**
      * @Author MSI

@@ -1,24 +1,45 @@
 package com.linjie.lostfound.system.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Found {
     @Id
-    @GeneratedValue
+    @TableGenerator(name="FOUND_GENERATOR",
+            table ="PK_GENERATOR",
+            pkColumnName="PK_COLUMN",
+            pkColumnValue="found",
+            valueColumnName="PK_VALUE",
+            initialValue=3000000,
+            allocationSize=1
+    )
+    @GeneratedValue(strategy=GenerationType.TABLE, generator="FOUND_GENERATOR")
+    @Column(name = "f_id")
     private Long id; //主键
+    @Column(name = "f_title")
     private String title; //标题
-    private String type; //类型
-    private Date foundTime; //拾物时间   单词1单词2  ，lost + time  单词2首字母大写 = lostTime
+//    @Column(name = "f_type")
+//    private String type; //类型
+    @Column(name = "f_found_time")
+    private String foundTime; //拾物时间   单词1单词2  ，lost + time  单词2首字母大写 = lostTime
+    @Column(name = "f_location")
     private String location; //拾物地点
+    @Column(name = "f_retrieve")
     private boolean retrieve = false; //是否找到 ,false表示未找到
+    @Column(name = "f_information")
     private String information; //详细信息
+    @Column(name = "f_contacts")
     private String contacts; //联系人
+    @Column(name = "f_phone")
     private String phone; //电话
+
+    @Column(name = "f_image",columnDefinition = "mediumtext")
     private String image; //图片存放路径
+
+    @ManyToOne(cascade = CascadeType.REFRESH,fetch = FetchType.EAGER,optional = true)
+    private Sort sort;
 
     public Long getId() {
         return id;
@@ -34,22 +55,6 @@ public class Found {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Date getFoundTime() {
-        return foundTime;
-    }
-
-    public void setFoundTime(Date foundTime) {
-        this.foundTime = foundTime;
     }
 
     public String getLocation() {
@@ -92,11 +97,27 @@ public class Found {
         this.phone = phone;
     }
 
+    public String getFoundTime() {
+        return foundTime;
+    }
+
+    public void setFoundTime(String foundTime) {
+        this.foundTime = foundTime;
+    }
+
     public String getImage() {
         return image;
     }
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public Sort getSort() {
+        return sort;
+    }
+
+    public void setSort(Sort sort) {
+        this.sort = sort;
     }
 }

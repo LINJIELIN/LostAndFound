@@ -13,4 +13,5 @@ spring:
     hibernate:
       ddl-auto: update  # 第一次create  第二次update
     show-sql: true
-
+server:
+  port: 8082
